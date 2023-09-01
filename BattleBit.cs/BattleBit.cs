@@ -9,30 +9,30 @@ using WindowsGSM.GameServer.Query;
 
 namespace WindowsGSM.Plugins
 {
-    public class L4D : SteamCMDAgent
+    public class BattleBit : SteamCMDAgent
     {
 		// - Plugin Details
         public Functions.Plugin Plugin = new Functions.Plugin
         {
-            name = "WindowsGSM.L4D", // WindowsGSM.XXXX
-            author = "GTVolk",
-            description = "🧩 WindowsGSM plugin for supporting Left 4 Dead Dedicated Server",
+            name = "WindowsGSM.BattleBit", // WindowsGSM.XXXX
+            author = "SmilerRyan",
+            description = "🧩 WindowsGSM plugin for supporting BattleBit Servers",
             version = "1.0",
-            url = "https://github.com/DevVault/WindowsGSM.L4D", // Github repository link (Best practice)
+            url = "https://github.com/SmilerRyan/WindowsGSM.BattleBit", // Github repository link (Best practice)
             color = "#9eff99" // Color Hex
         };
 
         // - Standard Constructor and properties
-		public L4D(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
+		public BattleBit(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
         private readonly ServerConfig _serverData;
 
 		// - Settings properties for SteamCMD installer
-        public override bool loginAnonymous => true;
-        public override string AppId => "222840"; // Game server appId
+        public override bool loginAnonymous => false;
+        public override string AppId => "671860"; // Game server appId
 
         // - Game server Fixed variables
-        public override string StartPath => "srcds.exe"; // Game server start path
-        public string FullName = "Left 4 Dead Dedicated Server"; // Game server FullName
+        public override string StartPath => "BattleBit.exe"; // Game server start path
+        public string FullName = "BattleBit Server"; // Game server FullName
         public bool AllowsEmbedConsole = true;  // Does this server support output redirect?
         public int PortIncrements = 1; // This tells WindowsGSM how many ports should skip after installation
         public object QueryMethod = new A2S(); // Query method should be use on current server type. Accepted value: null or new A2S() or new FIVEM() or new UT3()
@@ -40,32 +40,15 @@ namespace WindowsGSM.Plugins
         // - Game server default values
 		public string Port { get { return "27015"; } } // Default port
         public string QueryPort { get { return "27015"; } } // Default query port
-        public string Game { get { return "left4dead"; } } // Default game name
-        public string Defaultmap { get { return "l4d_hospital01_apartment"; } } // Default map name
+        public string Game { get { return "BattleBit"; } } // Default game name
+        public string Defaultmap { get { return "bm_c1a0"; } } // Default map name
         public string Maxplayers { get { return string.Empty; } } // Default maxplayers
-        public string Additional { get { return "-nocrashdialog +clientport {{clientport}}"; } } // Additional server start parameter
+        public string Additional { get { return "-nographics -batchmode"; } } // Additional server start parameter
 
 		// - Create a default cfg for the game server after installation
 		public async void CreateServerCFG()
         {
-            //Download server.cfg
-            string configPath = Functions.ServerPath.GetServersServerFiles(serverData.ServerID, Game, "cfg/server.cfg");
-            if (await Functions.Github.DownloadGameServerConfig(configPath, serverData.ServerGame))
-            {
-                string configText = File.ReadAllText(configPath);
-                configText = configText.Replace("{{hostname}}", serverData.ServerName);
-                configText = configText.Replace("{{rcon_password}}", serverData.GetRCONPassword());
-                File.WriteAllText(configPath, configText);
-            }
-
-            //Edit WindowsGSM.cfg
-            string configFile = Functions.ServerPath.GetServersConfigs(serverData.ServerID, "WindowsGSM.cfg");
-            if (File.Exists(configFile))
-            {
-                string configText = File.ReadAllText(configFile);
-                configText = configText.Replace("{{clientport}}", (int.Parse(serverData.ServerPort) - 10).ToString());
-                File.WriteAllText(configFile, configText);
-            }
+            
         }
 
         // - Start server function, return its Process to WindowsGSM
@@ -78,21 +61,9 @@ namespace WindowsGSM.Plugins
                 return null;
             }
 
-            string configPath = Functions.ServerPath.GetServersServerFiles(serverData.ServerID, Game, "cfg/server.cfg");
-            if (!File.Exists(configPath))
-            {
-                Notice = $"server.cfg not found ({configPath})";
-            }
-
             StringBuilder sb = new StringBuilder();
-            sb.Append($"-console -game {Game}");
-            sb.Append(string.IsNullOrWhiteSpace(serverData.ServerIP) ? string.Empty : $" -ip {serverData.ServerIP}");
-            sb.Append(string.IsNullOrWhiteSpace(serverData.ServerPort) ? string.Empty : $" -port {serverData.ServerPort}");
-            sb.Append(string.IsNullOrWhiteSpace(serverData.ServerMaxPlayer) ? string.Empty : $" -maxplayers {serverData.ServerMaxPlayer}");
-            sb.Append(string.IsNullOrWhiteSpace(serverData.ServerGSLT) ? string.Empty : $" +sv_setsteamaccount {serverData.ServerGSLT}");
+            sb.Append($"-nographics -batchmode");
             sb.Append(string.IsNullOrWhiteSpace(serverData.ServerParam) ? string.Empty : $" {serverData.ServerParam}");
-            sb.Append(string.IsNullOrWhiteSpace(serverData.ServerMap) ? string.Empty : $" +map {serverData.ServerMap}");
-            if (serverData.ServerParam.Contains("-game ")) { sb.Replace($" -game {Game}", ""); }
             string param = sb.ToString();
 
             Process p;
