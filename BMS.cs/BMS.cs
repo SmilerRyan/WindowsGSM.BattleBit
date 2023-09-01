@@ -9,30 +9,30 @@ using WindowsGSM.GameServer.Query;
 
 namespace WindowsGSM.Plugins
 {
-    public class L4D : SteamCMDAgent
+    public class BMS : SteamCMDAgent
     {
 		// - Plugin Details
         public Functions.Plugin Plugin = new Functions.Plugin
         {
-            name = "WindowsGSM.L4D", // WindowsGSM.XXXX
-            author = "GTVolk",
-            description = "🧩 WindowsGSM plugin for supporting Left 4 Dead Dedicated Server",
+            name = "WindowsGSM.BMS", // WindowsGSM.XXXX
+            author = "SmilerRyan",
+            description = "🧩 WindowsGSM plugin for supporting Black Mesa Dedicated Server",
             version = "1.0",
-            url = "https://github.com/DevVault/WindowsGSM.L4D", // Github repository link (Best practice)
+            url = "https://github.com/SmilerRyan/WindowsGSM.BMS", // Github repository link (Best practice)
             color = "#9eff99" // Color Hex
         };
 
         // - Standard Constructor and properties
-		public L4D(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
+		public BMS(ServerConfig serverData) : base(serverData) => base.serverData = _serverData = serverData;
         private readonly ServerConfig _serverData;
 
 		// - Settings properties for SteamCMD installer
         public override bool loginAnonymous => true;
-        public override string AppId => "222840"; // Game server appId
+        public override string AppId => "346680"; // Game server appId
 
         // - Game server Fixed variables
         public override string StartPath => "srcds.exe"; // Game server start path
-        public string FullName = "Left 4 Dead Dedicated Server"; // Game server FullName
+        public string FullName = "Black Mesa Dedicated Server"; // Game server FullName
         public bool AllowsEmbedConsole = true;  // Does this server support output redirect?
         public int PortIncrements = 1; // This tells WindowsGSM how many ports should skip after installation
         public object QueryMethod = new A2S(); // Query method should be use on current server type. Accepted value: null or new A2S() or new FIVEM() or new UT3()
@@ -40,8 +40,8 @@ namespace WindowsGSM.Plugins
         // - Game server default values
 		public string Port { get { return "27015"; } } // Default port
         public string QueryPort { get { return "27015"; } } // Default query port
-        public string Game { get { return "left4dead"; } } // Default game name
-        public string Defaultmap { get { return "l4d_hospital01_apartment"; } } // Default map name
+        public string Game { get { return "bms"; } } // Default game name
+        public string Defaultmap { get { return "bm_c1a0"; } } // Default map name
         public string Maxplayers { get { return string.Empty; } } // Default maxplayers
         public string Additional { get { return "-nocrashdialog +clientport {{clientport}}"; } } // Additional server start parameter
 
